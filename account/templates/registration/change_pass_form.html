@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Schimbați parola{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Schimbați parola</h1>
+        <p>Utilizați formularul de mai jos pentru a vă schimba parola.</p>
+        <form action="." method="post">
+            {{ form.as_p }}
+            <p><input type="submit" value="Schimbă"></p>
+            {% csrf_token %}
+        </form>
+    </div>
+{% endblock %}

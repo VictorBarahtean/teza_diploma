@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Editează-ți contul{% endblock %}
+{% block content %}
+<div id="contact" class="contact-us main-banner">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="col-lg-6 wow fadeIn" data-wow-duration="0.5s" data-wow-delay="0.25s">
+                <div class="section-heading left-content align-self-center ">
+                  <h2>Editează-ți contul</h2>
+                  <p>Folosind următorul formular puteți edita profilul:</p>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8 wow fadeIn" data-wow-duration="0.5s" data-wow-delay="0.25s">
+                <form id="contact" action="." method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        {% if user_form.errors %}
+                        <div class="col-lg-12" style="color: #fe3f40;">
+                            <fieldset>
+                                <span>
+                                    {% for field in user_form %}
+                                    
+                                        {% for error in field.errors %} 
+                                            <div class="alert alert-danger">
+                                                <strong>{{ error|escape }}</strong>
+                                            </div>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </span>
+                            </fieldset>
+                        </div>
+                        <div class="col-lg-12" style="color: #fe3f40;">
+                            <fieldset>
+                                <span>
+                                    {% for error in user_form.non_field_errors %}
+                                        <div class="alert alert-danger">
+                                            <strong>{{ error|escape }}</strong>
+                                        </div>
+                                    {% endfor %}
+                                </span>
+                            </fieldset>
+                        </div>
+                        {% endif %}
+                        {% if profile_form.errors %}
+                        <div class="col-lg-12" style="color: #fe3f40;">
+                            <fieldset>
+                                <span>
+                                    {% for field in profile_form %}
+                                    
+                                        {% for error in field.errors %} 
+                                            <div class="alert alert-danger">
+                                                <strong>{{ error|escape }}</strong>
+                                            </div>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </span>
+                            </fieldset>
+                        </div>
+                        <div class="col-lg-12" style="color: #fe3f40;">
+                            <fieldset>
+                                <span>
+                                    {% for error in profile_form.non_field_errors %}
+                                        <div class="alert alert-danger">
+                                            <strong>{{ error|escape }}</strong>
+                                        </div>
+                                    {% endfor %}
+                                </span>
+                            </fieldset>
+                        </div>
+                        {% endif %}
+                        {% if message_status != '' %}
+                            <div class="col-lg-12">
+                                <div class="alert alert-success" role="alert">
+                                    {{message_status}}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="col-lg-6">
+                            <fieldset>
+                                <input name="first_name"  placeholder="Numele" value="{{user_form.first_name}}" required>
+                            </fieldset>
+                        </div>
+                        <div class="col-lg-6">
+                            <fieldset>
+                            <input  name="last_name"  placeholder="Prenumele" value="{{user_form.last_name}}" required>
+                            </fieldset>
+                        </div>
+                        <div class="col-lg-12">
+                            <fieldset>
+                            <input  name="email" placeholder="Email" value="{{user_form.email}}" required>
+                            </fieldset>
+                        </div>
+                        <div class="col-lg-6">
+                            <fieldset>
+                                <label >Data de naștere:</label>
+                                <input type="date" name="date_of_brith" placeholder="Data de naștere" value="{{profile_form.date_of_birth_mod}}" required>
+                            </fieldset>
+                        </div>
+                        <div class="col-lg-12 prezent-photo">
+                            <fieldset>
+                                <h4 >Poza profilului</h4>
+                                <img src="{{ request.user.profile.photo.url }}" alt="">
+                                <label for="change_photo">Schimbă</label>
+                                <input type="file" name="photo" value = "{{profile_form.photo.url}}" id="change_photo" onchange="uploadPhoto(event)"> 
+                                <img id="changed_photo" src="#" alt="Template Image" onclick="clearPhoto(event)">
+                                <input type="hidden" value="{{profile_form.photo.url}}" id="current_photo">
+                            </fieldset>
+                        </div>
+                        <div class="col-lg-6">
+                            <fieldset>
+                            {% csrf_token %}
+                                <button type="submit" id="form-submit" class="main-button">Salvare schimbări</button>
+                            </fieldset>
+                        </div>
+                    </div>
+                </form>
+                
+            </div>
+        </div> 
+    </div>
+</div>
+{% endblock %}

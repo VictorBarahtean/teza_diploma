@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}{{ image.title }}{% endblock %}
+{% block content %}
+
+<div id="services" class="our-services section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 align-self-center  wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
+          <div class="left-image">
+            <img src="{{image.image.url}}" alt="">
+          </div>
+        </div>
+        <div class="col-lg-6 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.2s">
+          <div class="section-heading">
+            <h2>{{ image.title }}</h2>
+            <small><a href="{{image.user.get_absolute_url}}">{{image.user.get_full_name}}</a></small>
+            <br>
+            <small>{{image.created}}</small>
+            <p>{{ image.description }}</p>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="first-bar progress-skill-bar">
+                <h4>Detalii</h4>
+                <div class="detail-image">
+                  <li>{{total_views}} vizionări</li>
+                  <li class="number-likes">
+                    <a href="" data-id="{{ image.id }}" 
+                      data-action="{% if request.user in image.users_likes.all %}un{% endif %}like"
+                      class="like button" id="like-act">
+                      <i id="like-icon" class="fa-{% if request.user in image.users_likes.all %}solid{% else %}regular{% endif %} fa-heart"></i>
+                    </a> 
+                    <button type="button" id="button-total-like" class="btn btn-primary total" data-toggle="modal" data-target="#exampleModalScrollable" >
+                      {{image.total_likes}}
+                    </button>
+                    
+                  </li>
+                </div>
+              </div>
+            </div>
+            {% if request.user == image.user %}
+              <div class="col-lg-12">
+                <div class="first-bar progress-skill-bar">
+                  <h4>Setări</h4>
+                  <label>Vizibilitate:</label>
+                  <select  name="visibility" id="visibility" data-id="{{ image.id }}" >
+                    <option value="for_mee" {% if image.visibility == 'for_mee' %} selected {% endif %}>Doar pentru mine</option>
+                    <option value="for_fol" {% if image.visibility == 'for_fol' %} selected {% endif %}>Pentru abonați</option>
+                    <option value="for_all" {% if image.visibility == 'for_all' %} selected {% endif %}>Pentru toți</option>
+                  </select>
+                </div>
+                <form action="{% url 'images:edit' image.id %}">
+                  <button type="submit" class="btn btn-info">Editează postarea</button>
+                </form>
+                <br>
+                <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#areyousure" >Sterge postarea</button>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalScrollableTitle">Utilizatorii care le-au plăcut imaginea.</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="list-group">
+          {% for user in image.users_likes.all %}
+            <a href="{{user.get_absolute_url}}" class="list-group-item list-group-item-action">
+              {{user.get_full_name}}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2 -->
+<div class="modal fade" id="areyousure" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalScrollableTitle">Sterge postarea</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="list-group">
+          Sunte-ți sigur de acțiunea accesată?
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Nu</button>
+        <button type="button" class="btn btn-danger" id="button-delete-feed" data-dismiss="modal" data-id="{{image.id}}">Da</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block domready %}
+$('button#button-delete-feed').click(function(e){
+  e.preventDefault();
+  $.post(
+      '{% url "images:option_image" %}',
+      {id: $(this).data('id'),option: 'delete_feed'},
+      function(data){
+        if (data['status'] == 'ok'){
+          window.location.replace('{% url "user_detail" username=request.user.username %}');
+      }
+      }
+  );
+  });
+
+$('select#visibility').on('change', function(e) {
+    e.preventDefault();
+    $.post(
+        '{% url "images:option_image" %}',
+        {id: $(this).data('id'),option:'visibility', value: this.value},
+        function(data){
+          if (data['status'] == 'ok'){
+            console.log("ok_select");
+        }
+        }
+    );
+});
+
+ $('a.like').click(function(e){
+    e.preventDefault();
+    $.post(
+        '{% url "images:like" %}',
+        {id: $(this).data('id'),action: $(this).data('action')},
+        function(data){
+          if (data['status'] == 'ok'){
+            var previous_action = data['action'];
+            var id_image = data['image_id'];
+
+            $('a#like-act').data('action', previous_action == 'like' ?'unlike' : 'like');
+            console.log(previous_action);
+            if (previous_action == 'like'){
+              
+                $('i#like-icon').removeClass('fa-regular fa-heart');
+                $('i#like-icon').addClass('fa-solid fa-heart');
+            }
+            else{
+                $('i#like-icon').removeClass('fa-solid fa-heart');
+                $('i#like-icon').addClass('fa-regular fa-heart');
+            }
+            var previous_likes = parseInt(data['total_likes']);
+            console.log(previous_likes);
+            $('button#button-total-like').text(previous_likes);
+        }
+        }
+    );
+    });
+{% endblock %}

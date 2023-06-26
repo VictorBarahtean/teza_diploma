@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Încarcă imaginea{% endblock %}
+{% block content %}
+<div id="services" class="our-services section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 align-self-center  wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
+          <div class="left-image">
+            <img src="#" id="blah" alt="your image" style = "display: none;">
+            <!--style = "display: none;"-->
+          </div>
+        </div>
+        <div class="col-lg-6 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.2s">
+            <div class="section-heading">
+                <h2>Postare nouă</h2>
+            </div>
+            <div class="photo">
+            
+            </div>
+
+            <form action="." method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="input-title">Titlul postării</label>
+                    <input type="text" class="form-control" id="input-title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="input-descriere">Descriere</label>
+                    <textarea class="form-control" name="description" spellcheck="false" rows="7" cols="50" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="control-select">Vizibilitate</label>
+                    <select class="form-control" id="control-select" name="visibility">
+                        <option value="for_me">Doar pentru mine</option>
+                        <option value="for_followers">Pentru abonați</option>
+                        <option value="for_all">Pentru toți</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="input-file">Selectează fisierul</label>
+                    <input type="file" class="form-control-file" id="input-file" placeholder="Titlul postării" name="image" onchange="readURL(this);" required>
+                </div>
+                <div class="form-group">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" required>Postează</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script>
+    const container = document.querySelector(".container"),
+    privacy = container.querySelector(".post .privacy"),
+    arrowBack = container.querySelector(".audience .arrow-back");
+    const boxPostModal = document.querySelector('.create-box-g .blah');
+
+    boxPostModal.addEventListener("click", () => {
+        document.getElementById("imageUpld").value = "";
+        $('#blah').attr('src', "#");
+        boxPostModal.style.display = 'none';
+    });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+                $('#blah').attr('style', "display: static;");
+                //boxPostModal.style.display = 'grid';
+            };
+
+            reader.readAsDataURL(input.files[0]);
+            
+        }
+    }
+    </script>
+{% endblock %}

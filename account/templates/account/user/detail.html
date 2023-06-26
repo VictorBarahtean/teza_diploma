@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load static %}
+{% block title %}{{ user.get_full_name }}{% endblock %}
+{% block content %}
+<div id="about" class="about-us section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+            <div class="left-image wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s">
+                <img src="{{user.profile.photo.url}}" alt="person graphic">
+            </div>
+            </div>
+            <div class="col-lg-8 align-self-center">
+            <div class="services">
+                <div class="row">
+                <div class="col-lg-6">
+                    <div class="item wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s">
+                        <div class="right-text">
+                            <h4>{{ user.get_full_name }}</h4>
+                            {% if user.age_result != '-' %}
+                                <p>{{user.age_result}} ani ({{ user.profile.date_of_brith }})</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="item wow fadeIn" data-wow-duration="1s" data-wow-delay="0.7s">
+                        <div class="right-text">
+                            <h4>Abonați</h4>
+                            <p>{{user.followers.count}} utilizatori</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="item wow fadeIn" data-wow-duration="1s" data-wow-delay="0.9s">
+                        <div class="right-text">
+                            <h4>Postări</h4>
+                            <p>{{user.images_created.count}} postări</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="item wow fadeIn" data-wow-duration="1s" data-wow-delay="1.1s">
+                        <div class="right-text">
+                            <h4>Abonari</h4>
+                            <p>{{user.abonari}} utilizatori</p>
+                            {% if request.user == user %}
+                                <h4>Setări</h4>
+                                <p><a href="{% url 'edit' %}">Editează profilul</a></p>
+                                <p><a href="{% url 'password_change' %}">Schimbă parola</a></p>
+                            {% else %}
+                                <div class="main-button">
+                                    <a href="#" data-id="{{ user.id }}" 
+                                        data-action="{% if request.user in user.followers.all %}un{% endif %}follow" 
+                                        class="follow">
+                                        {% if request.user != user %}
+                                            {% if request.user not in user.followers.all %}
+                                                Abonează-te
+                                            {% else %}
+                                                Șterge abonamentul
+                                            {% endif %}
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="main-button" >
+                                    <a href="{% url 'chat:create_thread' user.username %}" class="create-message" >
+                                        Scrie mesaj
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% if request.user == user or user.images_created.all|length %}
+<div id="portfolio" class="our-portfolio">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+              <div class="section-heading  wow bounceIn" data-wow-duration="1s" data-wow-delay="0.2s">
+                <h2><em>Postările</em> <span> utilizatorului</span></h2>
+              </div>
+            </div>
+        </div>
+        <div class="row">
+            {% for image in user.images_created.all %}
+                {% if image.visibility != 'for_non' %}
+                    <div class="col-lg-3 col-sm-6">
+                        <a href="{{image.get_absolute_url}}">
+                            <div class="item wow bounceInUp" data-wow-duration="1s" data-wow-delay="0.3s">
+                            <div class="hidden-content">
+                                <h4>{{image.title}}</h4>
+                                <p>{{image.description|truncatewords:8}}</p>
+                            </div>
+                            <div class="showed-content">
+                                <img src="{{image.image.url}}" alt="">
+                            </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% if request.user == user %}
+                <div class="col-lg-3 col-sm-6">
+                    <a href="{% url 'images:create' %}">
+                        <div class="item wow bounceInUp" data-wow-duration="1s" data-wow-delay="0.3s">
+                        <div class="hidden-content">
+                            <h4>Postare nouă</h4>
+                            <p></p>
+                        </div>
+                        <div class="showed-content">
+                            <img src="{% static 'assets/images/new_feed1.png'%}" alt="" style="width: 8.5rem; height: 6.5rem;margin-top: 1rem;">
+                        </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+        {% if user.actions_user|length %}
+            <div class="row" style="margin-top: 10rem;">
+                <div class="col-lg-6 offset-lg-3">
+                <div class="section-heading  wow bounceIn" data-wow-duration="1s" data-wow-delay="0.2s">
+                    <h2><em>Acțiunile</em> <span> utilizatorului</span></h2>
+                </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% if user.actions_user|length %}
+    <div class="container main-container">
+        <div class="main-left" style="margin-top: 130px;">
+        </div>
+        <div class="main-mid" style="margin-top: -150px;">
+
+            <!--..................feeds..start...............................-->
+            <div class="feeds">
+                {% for action in user.actions_user %}
+                    {% include "action/detail.html" %}
+                {% endfor %}  
+            </div>
+        </div>
+        <!-- =======MAIN RIGHT======= -->
+        <div class="main-right" style="margin-top: 130px;">
+                        
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
+{% block domready %}
+    $('a.follow').click(function(e){
+        e.preventDefault();
+        $.post('{% url "user_follow" %}',
+            {
+                id: $(this).data('id'),
+                action: $(this).data('action')
+            },
+            function(data){
+                if (data['status'] == 'ok') {
+                    var previous_action = $('a.follow').data('action');
+                    
+                    $('a.follow').data('action', previous_action == 'follow' ? 'unfollow' : 'follow');
+                    
+                    $('a.follow').text(previous_action == 'follow' ? 'Șterge abonamentul' : 'Abonează-te');
+                    
+                    var previous_followers = parseInt(
+                    $('span.count .total').text());
+                    $('span.count .total').text(
+                        previous_action == 'follow' ? previous_followers + 1 : previous_followers - 1
+                    );
+                }
+            });
+    });
+{% endblock %}

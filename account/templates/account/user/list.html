@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block title %}Utilizatori{% endblock %}
+{% block content %}
+<div id="blog" class="our-blog section">
+    <div class="container">
+        <div class="section-heading  wow fadeInDown">
+            {% if filt == 'all' %}
+                <h2>Utilizatorii <em>SOCIO</em><span>MEET</span></h2>
+            {% elif filt == 'follow' %}
+                <h2><em>Abonații</em><span> mei</span></h2>
+            {% else %}
+                <h2><em>Abonările</em><span> mele</span></h2>
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-lg-12 item wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.25s">
+                <form method="POST" action="{% url 'search_user' %}">
+                    <div class="form-group" style="display: inline-flex; margin-bottom: 3.5rem; width: 35rem;">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{filt}}" name="type_search">
+                        <input type="text" value="{{srch_val}}" class="form-control" id="search-query-input" name="search_query" placeholder="Caută">
+                        <input type="submit" id="button_search" data-users={{users}} data-filt="{{filt}}" class="btn btn-danger" value="Cauta" style="margin-left: 1rem;">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+        {% if users|length %}
+            {% for user in users %}
+                {% if request.user != user %}
+                    <div class="col-lg-3 item wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.25s">
+                        <div class="left-image">
+                            <div class="info">
+                                <div class="list-user">
+                                    <div class="info-us">
+                                        <a href="{{user.get_absolute_url}}"><img src="{{user.profile.photo.url}}" alt="Workspace Desktop"></a>
+                                    </div>
+                                    <div class="info-user-n">
+                                        <a href="{{user.get_absolute_url}}"><h4>{{user.get_full_name}}</h4></a>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <h4>Nu au fost gasit nimic</h4>
+        {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block domready %}
+
+{% endblock %}

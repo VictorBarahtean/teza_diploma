@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Resetare parola{% endblock %}
+
+{% block content %}
+    <div id="contact" class="contact-us main-banner justify-content-center">
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                <div class="col-lg-6 wow fadeIn" data-wow-duration="0.5s" data-wow-delay="0.25s">
+                    <div class="section-heading left-content align-self-center ">
+                        <h2>Ați uitat parola?</h2>
+                        <p>Introdu adresa ta de e-mail pentru a obține o nouă parolă:</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8 wow fadeIn" data-wow-duration="0.5s" data-wow-delay="0.25s">
+                    <form id="contact" action="." method="post">
+                        <div class="row">
+                            {% if form.errors %}
+                            <div class="col-lg-12" style="color: #fe3f40;">
+                                <fieldset>
+                                    <span>
+                                        {% for field in form %}
+                                        
+                                            {% for error in field.errors %} 
+                                                <div class="alert alert-danger">
+                                                    <strong>{{ error|escape }}</strong>
+                                                </div>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </span>
+                                </fieldset>
+                            </div>
+                            <div class="col-lg-12" style="color: #fe3f40;">
+                                <fieldset>
+                                    <span>
+                                        {% for error in form.non_field_errors %}
+                                            <div class="alert alert-danger">
+                                                <strong>{{ error|escape }}</strong>
+                                            </div>
+                                        {% endfor %}
+                                    </span>
+                                </fieldset>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="col-lg-12">
+                                <fieldset>
+                                <input name="email"  placeholder="Email" autocomplete="off" required>
+                                </fieldset>
+                            </div>
+                            <div class="col-lg-12">
+                                <fieldset>
+                                {% csrf_token %}
+                                    <button type="submit" id="form-submit" class="main-button">Trimite e-mail</button>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

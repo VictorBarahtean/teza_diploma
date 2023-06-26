@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Încarcă imaginea{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1>Încarcă imaginea</h1>
+        <!--<img src="{{ request.GET.url }}" class="image-preview">
+        <form action="." method="post">
+            {{ form.as_p }}
+            {% csrf_token %}
+        <input type="submit" value="Încarcă">
+        </form>-->
+        <div class="photo">
+            <img src="#" id="blah" alt="your image" class="blah" style = "display: none;">
+        </div>
+        <form action="." method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="text" placeholder="Titlu imaginii" name="title" required>
+            <input type="file" placeholder="image" name="image" onchange="readURL(this);" required>
+            <textarea placeholder="Descriere" name="description" spellcheck="false" required></textarea>
+            <input type="submit" value="Încarcă" required>
+        </form>
+    </div>
+    <script>
+        const container = document.querySelector(".container"),
+        privacy = container.querySelector(".post .privacy"),
+        arrowBack = container.querySelector(".audience .arrow-back");
+        const boxPostModal = document.querySelector('.create-box-g .blah');
+  
+        boxPostModal.addEventListener("click", () => {
+            document.getElementById("imageUpld").value = "";
+            $('#blah').attr('src', "#");
+            boxPostModal.style.display = 'none';
+        });
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#blah').attr('src', e.target.result);
+                    $('#blah').attr('style', "display: static; width: 350px;height: 2   50px;");
+                    //boxPostModal.style.display = 'grid';
+                };
+
+                reader.readAsDataURL(input.files[0]);
+                
+            }
+        }
+      </script>
+{% endblock %}

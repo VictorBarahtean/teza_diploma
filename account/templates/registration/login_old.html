@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Log-in{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+      
+          <div class="main">
+      
+            <h3>Please Log In, or <a href="{% url 'register' %}">Sign Up</a></h3>
+            <div class="row">
+              <div class="col-xs-6 col-sm-6 col-md-6">
+                <a href="{% url 'social:begin' 'facebook' %}" class="btn btn-lg btn-primary btn-block">Facebook</a>
+              </div>
+              <div class="col-xs-6 col-sm-6 col-md-6">
+                <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-lg btn-info btn-block">Google</a>
+              </div>
+            </div>
+            <div class="login-or">
+              <hr class="hr-or">
+              <span class="span-or">or</span>
+            </div>
+      
+            <form action="{% url 'login' %}" method="post">
+              <div class="form-group">
+                {% if form.errors %}  
+                    <p style="color:red;">Your username and password didn't match.Please try again.</p>
+                {% endif %}
+              </div>
+              <div class="form-group">
+                <label for="inputUsernameEmail">Username or email</label>
+                <input type="text" class="form-control" id="inputUsernameEmail" name="username">
+              </div>
+              <div class="form-group">
+                <label for="inputPassword">Password</label>
+                <input type="password" class="form-control" id="inputPassword" name="password">
+                <a class="pull-right" href="{% url 'password_reset' %}">Forgot password?</a>
+              </div>
+              {% csrf_token %}
+              <input type="hidden" name="text" value="{{ next }}"/>
+              <button type="submit" class="btn btn btn-primary">
+                Log In
+              </button>
+            </form>
+          
+          </div>
+          
+        </div>
+      </div>
+{% endblock %}

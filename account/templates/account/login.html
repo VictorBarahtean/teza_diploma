@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Log-in{% endblock %}
+
+{% block content %}
+    <div class="main-banner wow fadeIn" id="top" data-wow-duration="1s" data-wow-delay="0.5s">
+        <div class="container">
+            <h1>Log-in</h1>
+            <p>Vă rugăm să utilizați următorul formular pentru a vă autentifica:</p>
+            <form action=".", method="post">
+                {{ form.as_p }}
+                {% csrf_token %}
+                <p><input type="submit", value="Log in"></p>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% load thumbnail %}
+{% load images_tags %}
+<div id="blog" class="our-blog section">
+    <div class="container">
+        <div class="section-heading wow fadeInDown">
+            <h2>Imaginile <em>populare</em> încărcate de <span>utilizatori</span></h2>
+        </div>
+        <div class="row">
+            {% for image in images %}
+                {% if image.visibility != 'for_non' %}
+                    <div class="col-lg-4 item wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.25s">
+                        <div class="left-image">
+                            <a href="{{image.get_absolute_url}}"><img src="{{image.image.url}}" alt="Workspace Desktop"></a>
+                            <div class="info">
+                                <div class="inner-content">
+                                    <a href="{{image.get_absolute_url}}"><h4>{{image.title}}</h4></a>
+                                    <ul>
+                                        <li><i class="fa fa-calendar"></i> {{image.created}}</li>
+                                        <br>
+                                        <li><i class="fa fa-user"></i> <a href="{{image.user.get_absolute_url}}">{{image.user.get_full_name}}</a></li>
+                                        <hr>
+                                        <li><i class="fa fa-eye"></i> {{image.views}}</li>
+                                        <li><i class="fa fa-heart"></i> {{image.total_likes}}</li>
+
+                                    </ul>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>

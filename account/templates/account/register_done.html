@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Bine ati venit{% endblock %}
+
+{% block content %}
+    <div id="contact" class="main-banner justify-content-center">
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                <div class="col-lg-6 wow fadeIn" data-wow-duration="0.5s" data-wow-delay="0.25s">
+                    <h1>Bine ați venit {{ new_user.first_name }}!</h1>
+                    <p>Contul tău a fost creat cu succes. Acum vă <a href="{% url 'login' %}">puteți autentifica.</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

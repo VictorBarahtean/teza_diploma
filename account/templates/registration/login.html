@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Logare{% endblock %}
+
+{% block content %}
+  <div id="contact" class="contact-us main-banner">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 align-self-center wow fadeInLeft" data-wow-duration="0.5s" data-wow-delay="0.25s">
+          <div class="section-heading left-content">
+            <h2>Conectare</h2>
+            <p>Vă rugăm să utilizați următorul formular pentru a vă autentifica.</p>
+            <form id="search">
+              <fieldset>
+                <input type="address" name="address" class="email" placeholder="Niciun profil în SOCIOMEET" autocomplete="off" disabled required>
+              </fieldset>
+              <fieldset>
+                <a href="{% url "register" %}" class="main-button">Înregistrează-te</a>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+        <div class="col-lg-6 wow fadeInRight" data-wow-duration="0.5s" data-wow-delay="0.25s">
+          <form id="contact" action="{% url 'login' %}" method="post">
+            <div class="row">
+              {% if form.errors %}
+                
+                <div class="col-lg-12" style="color: #fe3f40;">
+                  <fieldset>
+                    <span>
+                        Datele au fost introduse incorect.<br>
+                        Incercați din nou.
+                    </span>
+                  </fieldset>
+                </div>
+              {% endif %}
+              <div class="col-lg-12">
+                <fieldset>
+                  <input type="name" name="username" id="name" placeholder="Nume/Email" autocomplete="off" required>
+                </fieldset>
+              </div>
+              <div class="col-lg-12">
+                <fieldset>
+                  <input type="password" name="password" id="surname" placeholder="Parola" autocomplete="off" required>
+                </fieldset>
+              </div>
+              <div class="col-lg-6">
+                <fieldset>
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ next }}" />
+                  <button type="submit" id="form-submit" class="main-button">Conectează-te</button>
+                </fieldset>
+              </div>
+              <div class="col-lg-6">
+                <fieldset>
+                  <p><a href="{% url "password_reset" %}">Ați uitat parola?</a></p>
+                </fieldset>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% load thumbnail %}
+{% load action_tags %}
+{% with user=action.user profile=action.user.profile actprof=action.target.user acttarget=action.target %}
+    <div class="feed">
+        <div class="head">
+            {% if action.verb in 'likes,is following' %}
+                <div class="user">
+                    <div class="container">
+                        <div class="info info-line">
+                            <div>
+                                <a href="{{ user.get_absolute_url }}">
+                                    <h3>{{ user.get_full_name }}</h3>
+                                </a>
+                            </div>
+                            <div class="action-verb">
+                                {% if action.verb == 'likes' %}
+                                    consideră super
+                                {% endif %}
+                                {% if action.verb == 'is following' %}
+                                    urmărește
+                                {% endif %}
+                            </div>
+                            
+                        </div>
+                        {% if action.verb == 'is following' %}
+                        
+                            <div>
+                                <small>{{ action.created|timesince }} ago</small>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <hr style="width:100%;text-align:left;margin-left:0">
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="user">
+                {% if action.verb == 'is following' %}
+                    <div class="profile-phots">
+                        <a href="{{ acttarget.get_absolute_url }}">
+                            <img src="{{ acttarget.profile.photo.url }}" alt="{{ acttarget.get_full_name }}" class="item-img">
+                        </a>                              
+                    </div>
+                    <div class="info">
+                        <a href="{{ acttarget.get_absolute_url }}">
+                            <h3>{{ acttarget.get_full_name }}</h3>
+                        </a>
+                        
+                    </div> 
+                {% else %}
+                    <div class="profile-phots">
+                        {% thumbnail actprof.profile.photo "80x80" crop="100%" as im %}
+                            <a href="{{ actprof.get_absolute_url }}">
+                                <img src="{{ im.url }}" alt="{{ actprof.get_full_name }}" class="item-img">
+                            </a>
+                        {% endthumbnail %}                                
+                    </div>
+                    
+                    <div class="info">
+                        <a href="{{ actprof.get_absolute_url }}">
+                            <h3>{{ actprof.get_full_name }}</h3>
+                        </a>
+                        <small>{{ action.created|timesince }} ago</small>
+                    </div>
+                {% endif %}                               
+            </div>
+
+        </div>
+        {% if action.target %}
+            <div class="feed-phots">
+               
+                    {% with target=action.target %}
+                        {% if target.image %}
+                            
+                                <a href="{{ target.get_absolute_url }}">
+                                <img src="{{ target.image.url }}" class="item-img">
+                                </a>
+                            
+                        {% endif %}
+                    {% endwith %}
+                
+            </div>
+            <div class="action-buttons">
+                
+            </div>
+            <div class="caption">
+                <p>{{action.target.title}}</p>
+            </div> 
+            {% if action.verb != 'is following' %}
+                {% with total_likes=action.target.users_likes.count users_like=action.target.users_likes.all %}
+                    <a href="" id="like-id-{{ action.target.id }}" class="like__btn button like" data-id="{{ action.target.id }}" 
+                                                data-action="{% if request.user in users_like %}un{% endif %}like">
+                        <span id="icon"><i id="button-like-id-{{ action.target.id }}" class="{% if request.user in users_like %}fas{%else%}far{% endif %} fa-thumbs-up"></i></span>
+                        <span id="count-img-id-{{ action.target.id }}" class="count">{{action.target.total_likes}} </span> like{{ action.target.total_likes|pluralize }}
+                    </a>
+                {% endwith %}
+            {% endif %}
+            
+            <div class="text-gry comment"></div> 
+        {% endif %}
+    </div>
+{% endwith %}

@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Acasă{% endblock %}
+
+
+
+{% block content%}
+
+<!-- ................START MAINE SECTION......................... -->
+
+    <div class="container main-container">
+        <!--=======MAIN LEFT======== -->
+        <div class="main-left" style="margin-top: 130px;">
+          <div class="profile">
+            <div class="profile-phots">
+                <img src="{{ request.user.profile.photo.url }}" alt="">
+            </div> 
+            <div class="hendel">
+                <h4>{{ request.user.first_name }} {{ request.user.last_name }}</h4>
+                <p class="text-gry">@{{ request.user.username }}</p>
+            </div>  
+          </div>
+
+          <!--.............. SIDEBAR.............. -->
+          <div class="side-bar"> 
+
+            <a class="menu-item {% if section == 'dashboard' %}active {% endif %}" href="{% url 'dashboard' %}">
+                <i class="icon1 fa fa-newspaper-o"></i><h3>Flux de știri</h3>
+            </a>
+            <a class="menu-item" href="{{ request.user.get_absolute_url }}">
+                <i class="icon1 fa fa-user"></i><h3>Profilul meu</h3>
+            </a>
+            <a class="menu-item" href="{% url 'followers_list' %}">
+                <i class="icon1 fa fa-users"></i><h3>Abonții mei</h3>
+            </a>
+            <a class="menu-item" href="{% url 'followed_list' %}">
+                <i class="icon1 fa fa-users"></i><h3>Abonările mele</h3>
+            </a>
+
+            {% if section == "images" %}
+                <label for="creatPost" class="btn btn-primary" >create post</label>
+            {% endif %}
+                
+            
+     
+          </div>
+
+        </div>
+        <!-- =======MAIN MID======= -->
+        <div class="main-mid" style="margin-top: 120px;">
+
+            <!--..................feeds..start...............................-->
+            <div class="feeds">
+                {% for action in actions %}
+                    {% if action.id not in actions.new_followers and action.target.visibility != 'for_non' %}
+                        {% include "action/detail.html" %}
+                    {% endif %}
+                {% endfor %}  
+            </div>
+            <!--..................feeds.end................................-->
+        </div>
+         <!-- =======MAIN RIGHT======= -->
+        <div class="main-right" style="margin-top: 130px;">
+            <div class="messages" id="message-box">
+                <div class="message-heading">
+                    <h4>Abonații noi</h4><span><i class="icon1 fa fa-users"></i></span>
+                </div>
+                <!-- messagecategory -->
+                <div class="category">
+                    <h6 class="active"></h6>
+                    <h6 class="active"></h6>
+                    <h6 class="active"></h6>
+                </div>
+                <!-- messgae -->
+                
+                {% for new_follower in new_followers %}
+                    <div class="message">
+                        
+                            <div class="profile-phots">
+                                <div class=""></div>
+                                <img src="{{new_follower.user.profile.photo.url}}" alt="">
+                            </div>
+                            <div class="messgae-body">
+
+                                <h5><a href="{{ new_follower.user.get_absolute_url }}">{{new_follower.user.get_full_name}}</a></h5>
+                                <p class="text-gry">{{ new_follower.created|timesince }} în urmă</p>
+                            </div>
+                        
+                    </div>
+                {% empty %}
+                <div class="message">
+                    <div class="messgae-body">
+                        <p class="text-gry">Nu sunt abonati noi</p>
+                    </div>
+                </div>
+                {% endfor %}                    
+            </div>            
+        </div>
+    </div>
+</div>
+    
+{% endblock %}
+{% block domready %}
+ $('a.like').click(function(e){
+    e.preventDefault();
+    $.post(
+        '{% url "images:like" %}',
+        {id: $(this).data('id'),action: $(this).data('action')},
+        function(data){
+            if (data['status'] == 'ok'){
+                var previous_action = data['action'];
+                var id_image = data['image_id'];
+
+                $('a#like-id-'.concat(id_image)).data('action', previous_action == 'like' ?'unlike' : 'like');
+
+                if (previous_action == 'like'){
+                    $('i#button-like-id-'.concat(id_image)).removeClass('far fa-thumbs-up');
+                    $('i#button-like-id-'.concat(id_image)).addClass('fas fa-thumbs-up');
+                }
+                else{
+                    $('i#button-like-id-'.concat(id_image)).removeClass('fas fa-thumbs-up');
+                    $('i#button-like-id-'.concat(id_image)).addClass('far fa-thumbs-up');
+                }
+                var previous_likes = parseInt(data['total_likes']);
+
+                $('span#count-img-id-'.concat(id_image)).text(previous_likes);
+            }
+        }
+    );
+    });
+{% endblock %}
